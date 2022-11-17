@@ -2,7 +2,7 @@ import { Request, Response} from 'express';
 import { Category } from '../../models/Category';
 import { ICategoryProps } from '../../interfaces/ICategoryProps';
 
-export async function createCategory(req:Request, res:Response){
+export async function createCategory(req:Request, res:Response):Promise<Response>{
 
     try {
         const { name, icon } = req.body;

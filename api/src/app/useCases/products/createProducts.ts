@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Product } from '../../models/Product';
 import { IProductsProps } from '../../interfaces/IProductsProps';
-export async function createProducts(req:Request, res:Response){
+export async function createProducts(req:Request, res:Response):Promise<Response>{
     try {
         const { name ,description, price, category, ingredients} = req.body;
         const imagePath = req.file?.filename;

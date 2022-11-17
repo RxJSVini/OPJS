@@ -1,10 +1,10 @@
 import express from 'express';
+import multer from 'multer';
 import { listCategories } from './app/useCases/categories/listCategories';
 import { createCategory } from './app/useCases/categories/createCategory';
 import {createProducts } from './app/useCases/products/createProducts';
 import { celebrate, Joi, Segments } from 'celebrate';
 import { multerConfig } from './config/uploads';
-import multer from 'multer';
 import { listProducts } from './app/useCases/products/listProducts';
 import { listProductsByCategory } from './app/useCases/products/listProductsByCategory';
 import { createOrders } from './app/useCases/orders/createOrders';
