@@ -7,13 +7,13 @@ import { Order } from '../../types/Order';
 const orders: Order[] = [
     {
         '_id': '6372e48cbcd195b0d3d0f7f3',
-        'table': '123',
+        'table': '1',
         'status': 'WAITING',
         'products': [
             {
                 'product': {
                     'name': 'Pizza quatro queijos',
-                    'imagePath': '1668472896991-quatro-queijos.png',
+                    'imagePath': 'image-1668573345679-suco-de-laranja.png',
                     'price': 40,
                 },
                 'quantity': 3,
@@ -22,7 +22,7 @@ const orders: Order[] = [
             {
                 'product': {
                     'name': 'Coca cola',
-                    'imagePath': '1668473462705-coca-cola.png',
+                    'imagePath': 'image-1668573345679-suco-de-laranja.png',
                     'price': 7,
                 },
                 'quantity': 2,
@@ -31,30 +31,33 @@ const orders: Order[] = [
         ],
     }
 ];
+
 export function Orders(){
     return(
-        <Container>
-            <OrdersBoards
-                icon='🕒'
-                title='Fila de Espera'
-                orders={orders}
-            />
-            <OrdersBoards
-                icon='👨‍🍳'
-                title='Em preparação'
-                orders={[]}
-            />
-            <OrdersBoards
-                icon='Pronto'
-                title='✅'
-                orders={[]}
-            />
-            <OrdersBoards
-                icon='Cancelados'
-                title='❌'
-                orders={[]}
-            />
-        </Container>
+        <React.Fragment>
+            <Container>
+                <OrdersBoards
+                    icon='🕒'
+                    title='Fila de Espera'
+                    order={orders}
+                />
+                <OrdersBoards
+                    icon='👨‍🍳'
+                    title='Em preparação'
+                    order={[]}
+                />
+                <OrdersBoards
+                    icon='Pronto'
+                    title='✅'
+                    order={[]}
+                />
+                <OrdersBoards
+                    icon='Cancelados'
+                    title='❌'
+                    order={[]}
+                />
+            </Container>
 
+        </React.Fragment>
     );
 }

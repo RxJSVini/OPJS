@@ -6,39 +6,44 @@ import { Board, OrdersContainer } from './styles';
 interface IPropsOrders {
     icon:string;
     title:string;
-    orders:Order[];
+    order:Order[];
 }
 
 
-export function OrdersBoards({icon, title, orders}:IPropsOrders){
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
-    function handleOpenModal(){
+
+export function OrdersBoards({icon, title, order}:IPropsOrders){
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+    function handleOpenModal(order:Order){
         setIsModalVisible(true);
+        setSelectedOrder(order);
+    }
+
+    function handleCloseModal(){
+        setIsModalVisible(false);
+        setSelectedOrder(null);
     }
 
     return(
-        <>
+        <React.Fragment>
             <Board>
-                <OrderModal visible={isModalVisible} />
+                <OrderModal visible={isModalVisible} order={selectedOrder} onClose={handleCloseModal}/>
                 <header>
                     <span>{icon}</span>
                     <span>{title}</span>
-                    <span>{orders.length}</span>
+                    <span></span>
                 </header>
-
-                {orders?.length > 0 && (
-                    <OrdersContainer>
-                        {orders?.map((order) =>(
-                            <button type='button' key={order._id} onClick={handleOpenModal}>
-                                <strong>Mesa {order.table}</strong>
-                                <span>{order.products.length} itens</span>
-                            </button>
-                        ))}
-
-                    </OrdersContainer>
-                )}
+                <OrdersContainer>
+                    {order?.map((order) =>(
+                        <button type='button' key={order._id} onClick={() => handleOpenModal(order)}>
+                            <strong>Mesa {order.table}</strong>
+                            <span>{order.products.length} itens</span>
+                        </button>
+                    ))}
+                </OrdersContainer>
             </Board>
-        </>
+        </React.Fragment>
     );
 }
