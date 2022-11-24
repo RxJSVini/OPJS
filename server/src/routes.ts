@@ -53,7 +53,7 @@ router
     .post('/orders', celebrate({
         [Segments.BODY]:Joi.object().keys({
             table:Joi.number().required(),
-            products:Joi.object().required()
+            products:Joi.array().required(),
         })
     }),createOrders);
 
@@ -71,7 +71,7 @@ router
 router
     .delete('/orders/:orderId', celebrate({
         [Segments.PARAMS]:Joi.object().keys({
-            categoryId:Joi.string().required()
+            orderId:Joi.string()
         })
     }) ,cancelOrder);
 

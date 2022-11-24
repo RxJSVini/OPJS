@@ -6,7 +6,6 @@
 //     return brValue;
 // };
 
-export const useFormaPriceLocal =  (value:string | number) =>{
+export const useFormaPriceLocal =  (value:number) =>{
     return value.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
-
 };

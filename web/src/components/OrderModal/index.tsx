@@ -1,26 +1,31 @@
-import React, {  useEffect } from 'react';
+import React from 'react';
 import { Order } from '../../types/Order';
 import { CloseIcon } from '../CloseIcon';
 import { Overlay, ModalBody, OrderDetails, Actions } from './styles';
-import { useFormaPriceLocal } from '../../utils/priceFormat';
+import { useFormaPriceLocal  } from '../../utils/useFormaPriceLocal';
+
 interface OrderModalProps {
     visible:boolean;
     order:Order | null;
     onClose:() => void;
+    onCancelOrder:(orderId:string) =>Promise<void>;
+    isLoading:boolean;
+    onChangeOrderStatus:()=>void;
 }
 
-export function OrderModal({ visible,  order , onClose}: OrderModalProps){
-
+export function OrderModal({ visible,  order , onClose , onCancelOrder, isLoading, onChangeOrderStatus}: OrderModalProps){
 
     if(!visible || !order){
         return null;
     }
 
-    let total = 0;
-    order.products.forEach(({product, quantity}) =>{
-        total += product.price * quantity;
-    });
-
+    // let total = 0;
+    // order.products.forEach(({product, quantity}) =>{
+    //     total += product.price * quantity;
+    // });
+    const total = order.products.reduce((total, { quantity, product }) => {
+        return total + (quantity * product.price);
+    }, 0);
 
     return(
         <React.Fragment>
@@ -75,11 +80,29 @@ export function OrderModal({ visible,  order , onClose}: OrderModalProps){
 
                     </OrderDetails>
                     <Actions>
-                        <button type='button' className='primary'>
-                            <span>👨‍🍳</span>
-                            <span>Iniciar Produção</span>
-                        </button>
-                        <button type='button' className='secondary' onClick={onClose}>
+                        {order.status !== 'DONE' && (
+                            <button
+                                type='button'
+                                className='primary'
+                                disabled={isLoading}
+                                onClick={() => onChangeOrderStatus()}
+                            >
+                                <span>
+                                    {order.status === 'WAITING' && '👨‍🍳'}
+                                    {order.status === 'IN_PRODUCTION' && '👨‍🍳'}
+                                </span>
+                                <strong>
+                                    {order.status === 'WAITING' && 'Iniciar Produção'}
+                                    {order.status === 'IN_PRODUCTION' && 'Concluir Pedido'}
+                                </strong>
+                            </button>
+                        )}
+                        <button
+                            type='button'
+                            className='secondary'
+                            onClick={() => onCancelOrder(order._id)}
+                            disabled={isLoading}
+                        >
                             Cancelar Pedido
                         </button>
                     </Actions>

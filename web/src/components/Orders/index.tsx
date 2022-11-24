@@ -1,61 +1,82 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container } from './styles';
 import {  OrdersBoards } from '../OrdersBoards';
 import { Order } from '../../types/Order';
-
-
-const orders: Order[] = [
-    {
-        '_id': '6372e48cbcd195b0d3d0f7f3',
-        'table': '1',
-        'status': 'WAITING',
-        'products': [
-            {
-                'product': {
-                    'name': 'Pizza quatro queijos',
-                    'imagePath': 'image-1668573345679-suco-de-laranja.png',
-                    'price': 40,
-                },
-                'quantity': 3,
-                '_id': '6372e48cbcd195b0d3d0f7f4'
-            },
-            {
-                'product': {
-                    'name': 'Coca cola',
-                    'imagePath': 'image-1668573345679-suco-de-laranja.png',
-                    'price': 7,
-                },
-                'quantity': 2,
-                '_id': '6372e48cbcd195b0d3d0f7f5'
-            }
-        ],
-    }
-];
+import { api  } from '../../services/api';
+import socketio, {  Socket } from 'socket.io-client';
 
 export function Orders(){
+
+    const [orders, setOrders] = useState<Order[]>([]);
+
+    useEffect(() =>{
+        const socket = socketio('http://localhost:3001', {
+            transports:['websocket']
+        });
+
+        socket.on('orders@new', (orders) =>{
+            setOrders(prevState=> prevState.concat(orders));
+        });
+
+    }, []);
+
+    useEffect(() =>{
+        api.get('/orders')
+            .then(({ data }) =>{
+                setOrders(data);
+            })
+            .catch((err) =>{
+                return err;
+            });
+
+    }, [orders]);
+
+
+    function handleOrderStatusChange(orderId:string, status:  Order['status']){
+        setOrders((prevState) => prevState.map((order) =>(
+            order._id === orderId
+                ? {... order, status}
+                : order
+        )));
+    }
+
+    function handleCancelOrder(orderId:string){
+        setOrders((prevState) => prevState.filter(order => order._id !== orderId));
+    }
+
+
+    const waiting = orders.filter((orders) => orders.status === 'WAITING');
+    const in_production = orders.filter((orders) => orders.status === 'IN_PRODUCTION');
+    const done = orders.filter((orders) => orders.status === 'DONE');
+
+
     return(
         <React.Fragment>
             <Container>
                 <OrdersBoards
                     icon='🕒'
                     title='Fila de Espera'
-                    order={orders}
+                    order={waiting}
+                    onCancelOrder={handleCancelOrder}
+                    onChangeOrderStatus={handleOrderStatusChange}
+
                 />
                 <OrdersBoards
                     icon='👨‍🍳'
                     title='Em preparação'
-                    order={[]}
+                    order={in_production}
+                    onCancelOrder={handleCancelOrder}
+                    onChangeOrderStatus={handleOrderStatusChange}
+
                 />
                 <OrdersBoards
                     icon='Pronto'
                     title='✅'
-                    order={[]}
+                    order={done}
+                    onCancelOrder={handleCancelOrder}
+                    onChangeOrderStatus={handleOrderStatusChange}
                 />
-                <OrdersBoards
-                    icon='Cancelados'
-                    title='❌'
-                    order={[]}
-                />
+
             </Container>
 
         </React.Fragment>
